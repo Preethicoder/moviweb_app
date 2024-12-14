@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-size: 1rem;
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input:focus {
+      outline: none;
+      border: 2px solid #00c6ff;
+      background: #eef;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #ff6f61;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover {
+      background-color: #ff8a73;
+      transform: translateY(-3px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group input {
+      margin-top: 5px;
+    }
+
+    .info {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-top: 10px;
+    }
+  </style>
+  <script>
+    async function fetchMovieDetails() {
+      const movieNameInput = document.getElementById('movie_name');
+      const directorInput = document.getElementById('movie_director');
+      const yearInput = document.getElementById('year');
+      const ratingInput = document.getElementById('rating');
+
+      // Clear previous values
+      directorInput.value = '';
+      yearInput.value = '';
+      ratingInput.value = '';
+
+      const movieName = movieNameInput.value.trim();
+      if (!movieName) return;
+
+      // Replace with your OMDb API key
+      const apiKey = 'f21eaff';
+      const apiUrl = `http://www.omdbapi.com/?t=${encodeURIComponent(movieName)}&apikey=${apiKey}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (data.Response === "True") {
+          directorInput.value = data.Director || '';
+          yearInput.value = data.Year || '';
+          ratingInput.value = data.imdbRating || '';
+        } else {
+          alert("Movie not found!");
+        }
+      } catch (error) {
+        console.error("Error fetching movie details:", error);
+      }
+    }
+  </script>
+</head>
+<body>
+  <form action="/users/{{user}}/add_movie" method="POST">
+    <h1>Add Movie</h1>
+    <div class="form-group">
+      <label for="movie_name">Movie Name</label>
+      <input type="text" id="movie_name" name="movie_name" onblur="fetchMovieDetails()">
+    </div>
+    <div class="form-group">
+      <label for="movie_director">Director</label>
+      <input type="text" id="movie_director" name="movie_director">
+    </div>
+    <div class="form-group">
+      <label for="year">Year</label>
+      <input type="number" id="year" name="year">
+    </div>
+    <div class="form-group">
+      <label for="rating">Rating</label>
+      <input type="number" id="rating" name="rating" step="0.1">
+    </div>
+    <button type="submit">Add Movie</button>
+    <div class="info">Details auto-filled from OMDb on blur.</div>
+  </form>
+</body>
+</html>
