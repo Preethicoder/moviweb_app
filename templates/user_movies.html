@@ -75,7 +75,14 @@
         .actions a:hover {
             background-color: #ff8a73;
         }
-
+        button {
+        padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #ff6f61;
+            color: #fff;
+            transition: background-color 0.3s ease;
+            float:right;
+            }
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -110,6 +117,7 @@
             </div>
         </li>
         {% endfor %}
+        <a href="{{ url_for('home') }}"> <button>Return To Home Page</button></a>
     </ul>
 </body>
 </html>
