@@ -11,7 +11,6 @@ API_KEY = 'f21eaff'
 
 @app.route('/')
 def home():
-    """Take to main page of movie app"""
     return render_template("home_page.html")
 
 
@@ -27,7 +26,7 @@ def list_users():
 def add_user():
     """to add new user to database"""
     if request.method == 'POST':
-        user_name = request.form['name']  # Get the name from the form
+        user_name = request.form['name'].strip() # Get the name from the form
         data_manger.add_user(user_name)  # Add the user to the database
         flash('User added successfully!', 'success')
         return redirect(url_for('list_users'))  # Redirect to users list
@@ -52,10 +51,10 @@ def add_movie(user_id):
         return "User not found", 404
 
     if request.method == 'POST':
-        movie_name = request.form['movie_name']
-        movie_director = request.form['movie_director']
-        year = request.form['year']
-        rating = request.form['rating']
+        movie_name = request.form['movie_name'].strip()
+        movie_director = request.form['movie_director'].strip()
+        year = request.form['year'].strip()
+        rating = request.form['rating'].strip()
         data_manger.add_movie(movie_name, movie_director, year, rating, user_id)  # Add movie
         flash('Movie added successfully!', 'success')
         return redirect(url_for('user_movies', user_id=user_id))  # Redirect to user’s movie list
@@ -74,10 +73,10 @@ def update_movie(user_id, movie_id):
         return "Movie not found", 404
 
     if request.method == 'POST':
-        movie_name = request.form['movie_name']
-        movie_director = request.form['movie_director']
-        year = request.form['year']
-        rating = request.form['rating']
+        movie_name = request.form['movie_name'].strip()
+        movie_director = request.form['movie_director'].strip()
+        year = request.form['year'].strip()
+        rating = request.form['rating'].strip()
         updated_movie = data_manger.update_movie(movie_id, movie_name=movie_name,
                                                  movie_director=movie_director, year=year,
                                                  rating=rating)

@@ -90,39 +90,52 @@
     }
   </style>
   <script>
-    async function fetchMovieDetails() {
-      const movieNameInput = document.getElementById('movie_name');
-      const directorInput = document.getElementById('movie_director');
-      const yearInput = document.getElementById('year');
-      const ratingInput = document.getElementById('rating');
+   let debounceTimer;
 
-      // Clear previous values
-      directorInput.value = '';
-      yearInput.value = '';
-      ratingInput.value = '';
+async function fetchMovieDetails() {
+  const movieNameInput = document.getElementById('movie_name');
+  const directorInput = document.getElementById('movie_director');
+  const yearInput = document.getElementById('year');
+  const ratingInput = document.getElementById('rating');
 
-      const movieName = movieNameInput.value.trim();
-      if (!movieName) return;
+  // Clear previous values
+  directorInput.value = '';
+  yearInput.value = '';
+  ratingInput.value = '';
 
-      // Replace with your OMDb API key
-      const apiKey = 'f21eaff';
-      const apiUrl = `http://www.omdbapi.com/?t=${encodeURIComponent(movieName)}&apikey=${apiKey}`;
+  const movieName = movieNameInput.value.trim();
+  if (!movieName) return;
 
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+  // OMDb API key and endpoint
+  const apiKey = 'f21eaff';
+  const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(movieName)}&apikey=${apiKey}`;
 
-        if (data.Response === "True") {
-          directorInput.value = data.Director || '';
-          yearInput.value = data.Year || '';
-          ratingInput.value = data.imdbRating || '';
-        } else {
-          alert("Movie not found!");
-        }
-      } catch (error) {
-        console.error("Error fetching movie details:", error);
-      }
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (data.Response === "True") {
+      // Autofill fields with data from the API
+      directorInput.value = data.Director || '';
+      yearInput.value = data.Year || '';
+      ratingInput.value = data.imdbRating || '';
+    } else {
+      console.log("Movie not found."); // Avoid showing alert on every input
     }
+  } catch (error) {
+    console.error("Error fetching movie details:", error);
+  }
+}
+
+function debounce(func, delay) {
+  return function (...args) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => func(...args), delay);
+  };
+}
+
+const debouncedFetchMovieDetails = debounce(fetchMovieDetails, 500);
+
   </script>
 </head>
 <body>
@@ -130,7 +143,7 @@
     <h1>Add Movie</h1>
     <div class="form-group">
       <label for="movie_name">Movie Name</label>
-      <input type="text" id="movie_name" name="movie_name" onblur="fetchMovieDetails()">
+      <input type="text" id="movie_name" name="movie_name" oninput="fetchMovieDetails()" required>
     </div>
     <div class="form-group">
       <label for="movie_director">Director</label>
@@ -145,7 +158,7 @@
       <input type="number" id="rating" name="rating" step="0.1">
     </div>
     <button type="submit">Add Movie</button>
-    <div class="info">Details auto-filled from OMDb on blur.</div>
-  </form>
+    <div class="info">Details auto-filled from OMDb on change.</div>
+    </form>
 </body>
 </html>
